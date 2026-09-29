@@ -6,7 +6,7 @@ const PORT = 3000;
 app.get('/api', (req, res) => {
     res.json({
         status: "Success",
-        message: "Hello Bro! Your real Node.js Express API is officially live on AWS Cloud!",
+        message: "Hello Mohit! Your have done it on AWS Cloud!",
         timestamp: new Date()
     });
 });
