@@ -1,0 +1,25 @@
+name: Deploy Express API to AWS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploying via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ubuntu
+          key: ${{ secrets.AWS_SSH_KEY }}
+          script: |
+            ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+            cd ~/express-api
+            git config pull.rebase false
+            git fetch --all
+            git reset --hard origin/main
+            npm install
+            pm2 restart server.js || pm2 start server.js --name "my-express-api"
