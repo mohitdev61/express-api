@@ -2,9 +2,14 @@ const express = require('express');
 const app = express();
 const PORT = 3000;
 const cors = require('cors');
+const { connectDB, sequelize } = require('./config/db');
+
 require('dotenv').config();
 
 app.use(cors());
+app.use(express.json());
+
+connectDB();
 
 // aws s3 api setup
 const multer = require('multer');
