@@ -67,7 +67,7 @@ app.post('/api/upload', upload.single('image'), async (req, res) => {
         res.json({
             success: true,
             message: 'इमेज S3 बकेट में सफलतापूर्वक अपलोड हो गई!',
-            url: fileUrl
+            data: newUpload
         });
 
     } catch (error) {
