@@ -4,12 +4,19 @@ const PORT = 3000;
 const cors = require('cors');
 const { connectDB, sequelize } = require('./config/db');
 
+const Upload = require('./models/Upload');
+
 require('dotenv').config();
 
 app.use(cors());
 app.use(express.json());
 
 connectDB();
+
+sequelize.sync({ alter: true })
+    .then(() => console.log('🔄 All models synced with AWS RDS!'))
+    .catch(err => console.error('❌ Sync error:', err));
+
 
 // aws s3 api setup
 const multer = require('multer');
@@ -35,7 +42,7 @@ app.post('/api/upload', upload.single('image'), async (req, res) => {
             return res.status(400).json({ success: false, message: 'कोई फाइल अपलोड नहीं हुई!' });
         }
 
-        // फाइल का एक यूनिक नाम बनाएं ताकि पुरानी फाइल ओवरराइट न हो
+        const originalName = req.file.originalname;
         const fileName = `uploads/${Date.now()}_${req.file.originalname}`;
 
         // S3 पर फाइल भेजने का कमांड तैयार करें
@@ -51,6 +58,11 @@ app.post('/api/upload', upload.single('image'), async (req, res) => {
 
         // अपलोड होने के बाद लाइव फाइल का URL जेनरेट करें
         const fileUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}://{fileName}`;
+
+        const newUpload = await Upload.create({
+            fileName: originalName,
+            s3Url: fileUrl
+        });
 
         res.json({
             success: true,
