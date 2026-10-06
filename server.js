@@ -87,6 +87,25 @@ app.get('/api', (req, res) => {
     });
 });
 
+// 🖼️ डेटाबेस से सभी अपलोड की गई इमेजेस की लिस्ट लाने की API
+app.get('/api/images', async (req, res) => {
+    try {
+        // डेटाबेस से सारे रिकॉर्ड्स लेटेस्ट फर्स्ट (Newest First) ऑर्डर में निकालो
+        const images = await Upload.findAll({
+            order: [['createdAt', 'DESC']]
+        });
+        
+        res.json({
+            success: true,
+            data: images
+        });
+    } catch (error) {
+        console.error('Fetch Images Error:', error);
+        res.status(500).json({ success: false, message: 'डेटाबेस से इमेजेस लाने में एरर!' });
+    }
+});
+
+
 app.listen(PORT, () => {
     console.log(`Express Server is running internally on port ${PORT}`);
 });
