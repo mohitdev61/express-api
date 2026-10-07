@@ -57,8 +57,7 @@ app.post('/api/upload', upload.single('image'), async (req, res) => {
         await s3.send(new PutObjectCommand(uploadParams));
 
         // अपलोड होने के बाद लाइव फाइल का URL जेनरेट करें
-        const fileUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}://{fileName}`;
-
+        const fileUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
         const newUpload = await Upload.create({
             fileName: originalName,
             s3Url: fileUrl
